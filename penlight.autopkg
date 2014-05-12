@@ -2,7 +2,7 @@ nuget {
 	nuspec {
 		id = penlight;
 		title: Penlight;
-		version: 0.8.002.1;
+		version: 0.8.002.2;
 		authors: {coapp, Steve Donovan, Andrew Starks, Tightrope Media Systems};
 		owners: {Steve Donovan, David Manura};
 		licenseUrl: "http://opensource.org/licenses/MIT";
@@ -39,7 +39,7 @@ AAS: Added more robust string escaping (works well with long strings)."};
 		copyright: "Copyright (C) 2009 Steve Donovan, David Manura.";
 		tags: {native, Lua, module};
 		description: {
-@"A set of pure Lua libraries focusing on input data handling (such as reading configuration files), functional programming (such as map, reduce, placeholder expressions,etc), and OS path management. Much of the functionality is inspired by the Python standard libraries. };
+@"A set of pure Lua libraries focusing on input data handling (such as reading configuration files), functional programming (such as map, reduce, placeholder expressions,etc), and OS path management. Much of the functionality is inspired by the Python standard libraries."};
 
 	files {
 		// declare a lua collection
