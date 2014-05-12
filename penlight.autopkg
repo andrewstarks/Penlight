@@ -1,0 +1,76 @@
+nuget {
+	nuspec {
+		id = penlight;
+		title: Penlight;
+		version: 0.8.002.1;
+		authors: {coapp, Steve Donovan, Andrew Starks, Tightrope Media Systems};
+		owners: {Steve Donovan, David Manura};
+		licenseUrl: "http://opensource.org/licenses/MIT";
+		projectUrl: "http://stevedonovan.github.com/Penlight/.";
+		releaseNotes: {@"
+The map and reduce functions now take the function first, as Nature intended.
+
+The Python-like overloading of '*' for strings has been dropped, since it is silly. Also, strings are no longer callable; use 's:at(1)' instead of 's(1)' - this tended to cause Obscure Error messages.
+
+Wherever a function argument is expected, you can use the operator strings like '+','==',etc as well as pl.operator.add, pl.operator.eq, etc. (see end of pl/operator.lua for the full list.)
+
+tablex now has compare() and compare_no_order(). An explicit set() function has been added which constructs a table with the specified keys, all set to a value of true.
+
+List has reduce() and partition() (This is a cool function which separates out elements of a list depending on a classifier function.)
+
+There is a new array module which generalizes tablex operations like map and reduce for two-dimensional arrays.
+
+The famous iterator over permutations from PiL 9.3 has been included.
+
+David Manura's list comprehension library has been included.
+
+Also, utils now contains his memoize function, plus a useful function args which captures the case where varargs contains nils.
+
+There was a bug with dir.copyfile() where the flag was the wrong way round.
+
+config.lines() had a problem with continued lines.
+
+Some operators were missing in pl.operator; have renamed them to be consistent with the Lua metamethod names.
+
+AAS: Added more robust string escaping (works well with long strings)."}; 
+		
+		requireLicenseAcceptance:false;
+		summary: "Data handling libraries for Lua.";
+		copyright: "Copyright (C) 2009 Steve Donovan, David Manura.";
+		tags: {native, Lua, module};
+		description: {
+@"A set of pure Lua libraries focusing on input data handling (such as reading configuration files), functional programming (such as map, reduce, placeholder expressions,etc), and OS path management. Much of the functionality is inspired by the Python standard libraries. };
+
+	files {
+		// declare a lua collection
+		lua : {
+			// copies the whole folder tree.
+			#add-all-files : Items.LuaLibraryFiles;
+			// set the destination in the package itself. 
+			#destination : ${build_root}\${conditionFolder}\pl;
+		};
+
+		docs : {
+			#destination = ${d_docs}\pl;
+			{examples\**\*; doc\**\*;LICENSE.md;README.md}
+		};
+
+		[x64, v100] {
+			lua: {"x64\Release\pl\**\*"};
+		};
+        [win32, v100] {
+			lua : {"Win32\Release\pl\**\*"};
+		};
+    };
+
+	targets {
+		AfterBuild {
+			.Copy {
+				DestinationFolder = "$(TargetDir)pl";
+				SourceFiles = "@(LuaLibraryFiles)";
+				SkipUnchangedFiles = true;
+				UseHardlinksIfPossible = true;
+			};
+		};
+	}
+}
