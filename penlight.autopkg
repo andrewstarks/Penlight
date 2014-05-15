@@ -2,7 +2,7 @@ nuget {
 	nuspec {
 		id = penlight;
 		title: Penlight;
-		version: 0.8.002.5;
+		version: 0.8.002.8;
 		authors: {coapp, Steve Donovan, Andrew Starks, Tightrope Media Systems};
 		owners: {Steve Donovan, David Manura};
 
@@ -52,9 +52,9 @@ nuget {
 		// declare a lua collection
 		lua : {
 			// copies the whole folder tree.
-			#add-all-files : Items.LuaLibraryFiles;
+			#add-all-files : Items.plDir;
 			// set the destination in the package itself. 
-			#destination : ${build_root}\${conditionFolder}\pl;
+			#destination : ${build_root}\pl;
 		};
 		docs : {
 			#destination = "${d_docs}\pl";
@@ -63,20 +63,16 @@ nuget {
 		docs += {"examples\**\*"};
 		docs += {"LICENSE.md"};
 		docs += {"README.md"};
+		
+		lua: {"lua\pl\*"};
 
-		[x64, v100] {
-			lua: {"x64\Release\pl\*"};
-		};
-        [win32, v100] {
-			lua : {"Win32\Release\pl\*"};
-		};
     }
 
     targets {
 		AfterBuild {
 			.Copy {
 				DestinationFolder = "$(TargetDir)pl";
-				SourceFiles = "@(LuaLibraryFiles)";
+				SourceFiles = "@(plDir)";
 				SkipUnchangedFiles = true;
 			};
 		};
