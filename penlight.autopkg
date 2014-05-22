@@ -2,7 +2,7 @@ nuget {
 	nuspec {
 		id = penlight;
 		title: Penlight;
-		version: 0.8.002.8;
+		version: 0.8.002.9;
 		authors: {coapp, Steve Donovan, Andrew Starks, Tightrope Media Systems};
 		owners: {Steve Donovan, David Manura};
 
@@ -37,6 +37,7 @@ nuget {
 			Some operators were missing in pl.operator and  I have renamed them to be consistent with the Lua metamethod names.
 
 			AAS: Added more robust string escaping (works well with long strings)."; 
+			
 			description: @"A set of pure Lua libraries focusing on input data handling (such as reading configuration files), functional programming (such as map, reduce, placeholder expressions,etc), and OS path management. Much of the functionality is inspired by the Python standard libraries.";
 			tags: {native, Lua, module};
 	}
@@ -46,6 +47,8 @@ nuget {
             // This is a list of other NuGet packages required to use this package.
             // Each item follows the format "<pkg_name>/<version>"
             lua/"[5.1, 5.4)",
+            luafilesystem/"[1.6, 2)"
+
         };
     }
 	files {
