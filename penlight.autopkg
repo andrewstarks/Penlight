@@ -2,7 +2,7 @@ nuget {
 	nuspec {
 		id = penlight;
 		title: Penlight;
-		version: 0.8.002.9;
+		version: 0.8.003.1;
 		authors: {coapp, Steve Donovan, Andrew Starks, Tightrope Media Systems};
 		owners: {Steve Donovan, David Manura};
 
@@ -12,7 +12,10 @@ nuget {
 		
 		requireLicenseAcceptance: false;
 		summary: "Data handling libraries for Lua.";
-		releaseNotes: @"The map and reduce functions now take the function first, as Nature intended.
+		releaseNotes: @"
+			AAS: added __pretty == false check. If so, in metatable or on the table itself, pretty will not serialize that table.
+			 --in the future, it'd be cool if it could be a function, and pretty would run that function, instead.
+			The map and reduce functions now take the function first, as Nature intended.
 
 			The Python-like overloading of '*' for strings has been dropped, since it is silly. Also, strings are no longer callable. Use 's:at(1)' instead of 's(1)' - this tended to cause Obscure Error messages.
 
