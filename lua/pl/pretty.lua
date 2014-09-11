@@ -212,10 +212,10 @@ function pretty.write (tbl,space,not_clever)
             --AAS
             if t.__pretty == false or
                 getmetatable(t) and getmetatable(t).__pretty == false then
-                if then
-                    putln('<' .. tostring(t) ..'>')
-                    return
-                end
+              
+                putln('<' .. tostring(t) ..'>')
+                return
+            end
             if tables[t] then
                 putln('<cycle>,')
                 return
