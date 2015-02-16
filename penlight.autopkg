@@ -2,7 +2,7 @@ nuget {
 	nuspec {
 		id = penlight;
 		title: Penlight;
-		version: 1.3.1.2;
+		version: 1.3.1.4;
 		authors: {coapp, Steve Donovan, Andrew Starks, Tightrope Media Systems};
 		owners: {Steve Donovan, David Manura};
 
@@ -40,6 +40,7 @@ nuget {
 			Some operators were missing in pl.operator and  I have renamed them to be consistent with the Lua metamethod names.
 
 			AAS: Added more robust string escaping (works well with long strings)."; 
+			AAS: Fixed implicit conversion from number to string in pretty.lua
 			
 			description: @"A set of pure Lua libraries focusing on input data handling (such as reading configuration files), functional programming (such as map, reduce, placeholder expressions,etc), and OS path management. Much of the functionality is inspired by the Python standard libraries.";
 			tags: {native, Lua, module};

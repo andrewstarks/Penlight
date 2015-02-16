@@ -135,9 +135,9 @@ local function index (numkey,key)
     --AAS
     if not numkey then 
         key = quote(key) 
-         key = key:find("^%[") and (" " .. key .. " ") or key
+         key = key:find("^%[") and (" " .. tostring(key) .. " ") or key
     end
-    return '['..key..']'
+    return '['..tostring(key)..']'
 end
 
 
