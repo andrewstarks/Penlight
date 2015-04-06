@@ -11,7 +11,7 @@ local unpack = rawget(_G,'unpack') or rawget(table,'unpack')
 local collisions = {}
 
 local utils = {
-    _VERSION = "1.2.1",
+    _VERSION = "1.3.2",
     lua51 = compat.lua51,
     setfenv = compat.setfenv,
     getfenv = compat.getfenv,
@@ -57,7 +57,8 @@ local function import_symbol(T,k,v,libname)
     local key = rawget(T,k)
     -- warn about collisions!
     if key and k ~= '_M' and k ~= '_NAME' and k ~= '_PACKAGE' and k ~= '_VERSION' then
-        utils.printf("warning: '%s.%s' overrides existing symbol\n",libname,k)
+        utils.printf("warning: '%s.%s' will not override existing symbol\n",libname,k)
+        return
     end
     rawset(T,k,v)
 end
@@ -455,7 +456,7 @@ raise = utils.raise
 -- With Lua 5.2, may return nil for a function with no global references!
 -- Based on code by [Sergey Rozhenko](http://lua-users.org/lists/lua-l/2010-06/msg00313.html)
 -- @param f a function or a call stack reference
--- @function utils.setfenv
+-- @function utils.getfenv
 
 ---------------
 -- Set environment of a function
