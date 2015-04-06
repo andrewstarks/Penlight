@@ -193,7 +193,7 @@ end
 -- The first form returns the class directly and does not set its `_name`.
 -- The second form creates a variable `Name` in the current environment set
 -- to the class, and also sets `_name`.
--- if `class._globals` is set to `true`, then classes are stored in _ENV (or global, for Lua < 5.2). If `class._globals` is `false` or `nil`, then classes are stored within the `class._classes` field. Unlike the `true` variant, subsequent indexing of the class name results in the existing class being returned, instead of the creation of another new class by the same name. Deleting a class becomes `class.class_name = nil`.
+-- if `class.use_globals` is set to `true`, then classes are stored in _ENV (or global, for Lua < 5.2). If `class.use_globals` is `false` or `nil`, then classes are stored within the `class.classes` field. Unlike the `true` variant, subsequent indexing of the class name results in the existing class being returned, instead of the creation of another new class by the same name. Deleting a class becomes `class.class_name = nil`.
 -- @function class
 -- @param base optional base class
 -- @param c_arg optional parameter to class constructor
@@ -201,7 +201,7 @@ end
 local class
 --for strict, so it doesn't complain later.
 local _PL_GLOBAL_CLASSES = _PL_GLOBAL_CLASSES == nil and true or _PL_GLOBAL_CLASSES
-class = setmetatable({_classes = {}, _globals = _PL_GLOBAL_CLASSES},{
+class = setmetatable({classes = {}, use_globals = _PL_GLOBAL_CLASSES},{
     __call = function(fun,...)
         return _class(...)
     end,
@@ -211,16 +211,16 @@ class = setmetatable({_classes = {}, _globals = _PL_GLOBAL_CLASSES},{
             return class
         end
 		local env
-		if rawget(tbl, '_globals') then
+		if rawget(tbl, 'use_globals') then
 			compat = compat or require 'pl.compat'
 			env = compat.getfenv(2)
-		elseif tbl._classes[key] then --access existing class
-			return tbl._classes[key]
+		elseif tbl.classes[key] then --access existing class
+			return tbl.classes[key]
 		else --create new class, without global namespace pollution.
-			env = tbl._classes
+			env = tbl.classes
 		end
 		-- return a closure that will set the key of the 
-		-- global / class._classes table to the new class that is created.
+		-- global / class.classes table to the new class that is created.
 		return function(...)
             local c = _class(...)
             c._name = key
@@ -229,8 +229,8 @@ class = setmetatable({_classes = {}, _globals = _PL_GLOBAL_CLASSES},{
         end
     end,
 	__newindex = function(tbl,key,value)
-		if tbl._classes[key] then
-			tbl._classes[key] = value
+		if tbl.classes[key] then
+			tbl.classes[key] = value
 		else
 			rawset(tbl, key, value)
 		end

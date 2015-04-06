@@ -492,8 +492,8 @@ or the new `_ENV` mechanism.
 There are times when using the global namespace for class names may fail you.
 For example, if you need to cast a plain table to a class by its given name. `_ENV`
 may work, but it may not. Therefore, you can alternately store classes in 
-`class._classes` by setting the global variable `_PL_GLOBAL_CLASSES` to `false` prior
-to loading loading `pl.class`. After it's loaded, set `class._globals` to `false`.
+`class.classes` by setting the global variable `_PL_GLOBAL_CLASSES` to `false` prior
+to loading loading `pl.class`. After it's loaded, set `class.use_globals` to `false`.
 
 	> _PL_GLOBAL_CLASSES = false
 	> class = require'pl.class'
