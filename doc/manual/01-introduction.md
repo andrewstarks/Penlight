@@ -489,6 +489,33 @@ more convenient form puts the class name in the _current environment_! That is,
 you may use it safely within modules using the old-fashioned `module()`
 or the new `_ENV` mechanism.
 
+There are times when using the global namespace for class names may fail you.
+For example, if you need to cast a plain table to a class by its given name. `_ENV`
+may work, but it may not. Therefore, you can alternately store classes in 
+`class._classes` by setting the global variable `_PL_GLOBAL_CLASSES` to `false` prior
+to loading loading `pl.class`. After it's loaded, set `class._globals` to `false`.
+
+	> _PL_GLOBAL_CLASSES = false
+	> class = require'pl.class'
+	> class.Fred()
+	table: 000000000042A2D0
+	> print(Fred)
+	nil
+	> Fred = class.Fred
+	> print(Fred)
+	table: 000000000042A2D0
+	> f = Fred()
+	> f2 = class.Fred()
+	> print(f, f2)
+	Fred: 00000000003BA6A0  Fred: 000000000042A390
+
+Note that subsequent access to `class.Fred` returns the *same* constructor. This change
+is required, now that the class is not stored in the `_ENV` table. To delete the `Fred` 
+class, just set it to nil
+
+	> class.Fred = nil
+
+
 There is always more than one way of doing things in Lua; some may prefer this
 style for creating classes:
 

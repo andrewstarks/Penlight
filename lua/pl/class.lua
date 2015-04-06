@@ -193,12 +193,15 @@ end
 -- The first form returns the class directly and does not set its `_name`.
 -- The second form creates a variable `Name` in the current environment set
 -- to the class, and also sets `_name`.
+-- if `class._globals` is set to `true`, then classes are stored in _ENV (or global, for Lua < 5.2). If `class._globals` is `false` or `nil`, then classes are stored within the `class._classes` field. Unlike the `true` variant, subsequent indexing of the class name results in the existing class being returned, instead of the creation of another new class by the same name. Deleting a class becomes `class.class_name = nil`.
 -- @function class
 -- @param base optional base class
 -- @param c_arg optional parameter to class constructor
 -- @param c optional table to be used as class
 local class
-class = setmetatable({},{
+--for strict, so it doesn't complain later.
+local _PL_GLOBAL_CLASSES = _PL_GLOBAL_CLASSES == nil and true or _PL_GLOBAL_CLASSES
+class = setmetatable({_classes = {}, _globals = _PL_GLOBAL_CLASSES},{
     __call = function(fun,...)
         return _class(...)
     end,
@@ -207,15 +210,31 @@ class = setmetatable({},{
             io.stderr:write('require("pl.class").class is deprecated. Use require("pl.class")\n')
             return class
         end
-        compat = compat or require 'pl.compat'
-        local env = compat.getfenv(2)
-        return function(...)
+		local env
+		if rawget(tbl, '_globals') then
+			compat = compat or require 'pl.compat'
+			env = compat.getfenv(2)
+		elseif tbl._classes[key] then --access existing class
+			return tbl._classes[key]
+		else --create new class, without global namespace pollution.
+			env = tbl._classes
+		end
+		-- return a closure that will set the key of the 
+		-- global / class._classes table to the new class that is created.
+		return function(...)
             local c = _class(...)
             c._name = key
             rawset(env,key,c)
             return c
         end
-    end
+    end,
+	__newindex = function(tbl,key,value)
+		if tbl._classes[key] then
+			tbl._classes[key] = value
+		else
+			rawset(tbl, key, value)
+		end
+	end,
 })
 
 class.properties = class()
