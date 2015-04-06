@@ -636,6 +636,23 @@ The convention is that the internal field name is prefixed with an underscore;
 when reading `mp.a`, first a check for an explicit _getter_ `get_a` and then only
 look for `_a`. Simularly, writing `mp.a` causes the _setter_ `set_a` to be used.
 
+If you'd like a form of "soft" read-only properties, you may add setters that are
+equal to `false`. This will cause an error if you attempt to set the field:
+
+	>class = require'pl.class'
+	>A = class.A(class.properties)
+	>A.set_foo = false
+	>a = A()
+	>a._foo = "Boy!" --this is what we mean by "soft" read-only.
+	>print(a.foo) 
+	Boy!
+	>a.foo = "Howdy"
+	testing/class.lua:10: The 'foo' field is read-only in the 'A' class.
+	stack traceback:
+		[C]: in function 'error'
+		C:\x64\Debug\lua\pl\class.lua:266: in metamethod '__newindex'
+		testing/class.lua:10: in main chunk
+
 This is cool behaviour, but like much Lua metaprogramming, it is not free. Method
 lookup on such objects goes through `\_\_index` as before, but now `\_\_index` is a
 function which has to explicitly look up methods in the class, before doing any

@@ -258,8 +258,16 @@ function class.properties._class_init(klass)
         local setter = klass[p]
         if setter then
             setter(t,value)
-        else
+        elseif setter == nil then
             rawset(t,key,value)
+		else
+			--It's debatable, whether or not to do this. I think that it's a good idea, given that an error would
+			--make it much easier to debug.
+			error(("The '%s' field is read-only in the '%s' class."):
+				format( tostring(key), 
+					tostring(klass._name or t._name or ("<unknown class name: %s>"):format(tostring(t)) ) 
+				),
+			2)
         end
     end
 end
