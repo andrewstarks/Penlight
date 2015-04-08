@@ -109,6 +109,13 @@ local function tupdate(td,ts,dont_override)
     end
 end
 
+--[[ TODO: There needs to be more documentation about:
+	* _class_init: something that a base class does to the clases that inheret from it?
+	* _post_init: a base class method that is run post-_init of the inhereted class.
+	* _create: a function that is run *on the arguments received*. I believe this is
+		intended to be a sort of default argument processor?
+		intended to be a sort of default argument processor?
+--]]
 local function _class(base,c_arg,c)
     -- the class `c` will be the metatable for all its objects,
     -- and they will look up their methods in it.
@@ -242,33 +249,56 @@ class.properties = class()
 function class.properties._class_init(klass)
     klass.__index = function(t,key)
         -- normal class lookup!
-        local v = klass[key]
-        if v then return v end
+		-- needs to be raw because of `catch` and _handler
+        local value = rawget(klass,key)
+        if value then return value end
         -- is it a getter?
-        v = rawget(klass,'get_'..key)
-        if v then
-            return v(t)
-        end
-        -- is it a field?
-        return rawget(t,'_'..key)
+		if type(key) == 'string' then
+			value = rawget(klass,'get_'..key)
+			if value then
+				return value(t)
+			end
+			-- is it a field?
+			value = rawget(t,'_'..key)
+			if value ~= nil then
+				return value
+			end
+		end
+		if klass._handler then
+			return klass._handler(t, key)
+		else
+			 return nil
+		end
+
     end
     klass.__newindex = function (t,key,value)
         -- if there's a setter, use that, otherwise directly set table
-        local p = 'set_'..key
-        local setter = klass[p]
-        if setter then
-            setter(t,value)
-        elseif setter == nil then
-            rawset(t,key,value)
-		else
-			--It's debatable, whether or not to do this. I think that it's a good idea, given that an error would
-			--make it much easier to debug.
-			error(("The '%s' field is read-only in the '%s' class."):
-				format( tostring(key), 
-					tostring(klass._name or t._name or ("<unknown class name: %s>"):format(tostring(t)) ) 
-				),
-			2)
-        end
+		local setter
+		if  type(key) == 'string' then
+			-- must be raw because of _setter
+			setter = rawget(klass, 'set_'..key)
+			if setter then
+				--in this case, we have an explicit setter.
+				setter(t,value)
+			elseif setter == false then
+				--setter == false, which means read-only.
+				--It's debatable, whether or not to do this. I think that it's a good idea, given that an error would
+				--make it much easier to debug.
+				error(("The '%s' field is read-only in the '%s' class."):
+					format( tostring(key), 
+						tostring(klass._name or t._name or ("<unknown class name: %s>"):format(tostring(t)) ) 
+					),
+				2)
+			end
+		end
+		--now check for the implicit setter, if there is one.
+		--compliments _handler
+		setter = rawget(klass, '_setter')
+		if setter and setter ~= klass.__newindex then
+			return klass._setter(t, key, value)
+		else --all else failed...
+			rawset(t,key,value)
+		end
     end
 end
 
